@@ -10,7 +10,6 @@ import { AiPrivacyCheckerTool } from '../components/tools/AiPrivacyCheckerTool';
 import { TwoFactorSimulatorTool } from '../components/tools/TwoFactorSimulatorTool';
 import { CloudSecuritySimulatorTool } from '../components/tools/CloudSecuritySimulatorTool';
 import { Badge } from '../components/ui/Badge';
-import { Button } from '../components/ui/Button';
 import { api } from '../services/api';
 import { Activity, RiskTier } from '../types';
 
@@ -25,7 +24,7 @@ export const ParticipantDashboard: React.FC<ParticipantDashboardProps> = ({
   participantId,
   nickname,
   sessionCode,
-  onExit,
+  onExit: _onExit,
 }) => {
   const [activeTool, setActiveTool] = useState<string | null>(null);
   const [history, setHistory] = useState<Activity[]>([]);
