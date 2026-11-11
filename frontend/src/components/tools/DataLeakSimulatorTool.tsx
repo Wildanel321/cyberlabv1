@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { UserCheck, ShieldAlert, CheckCircle2, AlertTriangle, Eye, Sparkles, ArrowRight } from 'lucide-react';
+import { UserCheck, ShieldAlert, CheckCircle2, AlertTriangle, Eye } from 'lucide-react';
 import { analyzePersonalDataLeak } from '../../utils/dataLeakSimulator';
 import { PiiAnalysisResult, RiskTier } from '../../types';
 import { Badge } from '../ui/Badge';
@@ -74,7 +74,7 @@ export const DataLeakSimulatorTool: React.FC<ToolProps> = ({ onComplete }) => {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           {/* Preset buttons */}
           <div className="flex flex-wrap items-center gap-2 text-xs text-slate-400">
-            <span>Synthetic presets:</span>
+            <span className="text-slate-400">Samples:</span>
             <button
               type="button"
               onClick={() => {
@@ -82,7 +82,7 @@ export const DataLeakSimulatorTool: React.FC<ToolProps> = ({ onComplete }) => {
                 setTextInput(sample);
                 setResult(analyzePersonalDataLeak(sample));
               }}
-              className="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono"
+              className="min-h-[44px] px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-slate-200 font-mono text-xs transition-colors"
             >
               Indonesian NIK + Phone
             </button>
@@ -93,13 +93,13 @@ export const DataLeakSimulatorTool: React.FC<ToolProps> = ({ onComplete }) => {
                 setTextInput(sample);
                 setResult(analyzePersonalDataLeak(sample));
               }}
-              className="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono"
+              className="min-h-[44px] px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-slate-200 font-mono text-xs transition-colors"
             >
               Credit Card + Email
             </button>
           </div>
 
-          <Button onClick={handleScan} disabled={!textInput.trim()} variant="primary">
+          <Button onClick={handleScan} disabled={!textInput.trim()} variant="primary" className="min-h-[44px] w-full sm:w-auto">
             Scan & Redact
           </Button>
         </div>
@@ -170,9 +170,10 @@ export const DataLeakSimulatorTool: React.FC<ToolProps> = ({ onComplete }) => {
                       </div>
                       <p className="text-slate-400 mt-1">{item.description}</p>
                     </div>
-                    <div className="font-mono text-right shrink-0">
-                      <span className="text-rose-400 line-through mr-2">{item.rawSnippet}</span>
-                      <span className="text-emerald-400">&rarr; {item.maskedSnippet}</span>
+                    <div className="font-mono text-left sm:text-right shrink-0 flex flex-wrap items-center gap-1.5">
+                      <span className="text-rose-400 line-through">{item.rawSnippet}</span>
+                      <span className="text-slate-500">to</span>
+                      <span className="text-emerald-400">{item.maskedSnippet}</span>
                     </div>
                   </div>
                 ))}
@@ -187,17 +188,17 @@ export const DataLeakSimulatorTool: React.FC<ToolProps> = ({ onComplete }) => {
               disabled={hasSubmitted}
               variant="primary"
               size="lg"
+              className="w-full sm:w-auto min-h-[44px]"
             >
               {hasSubmitted ? (
-                <span className="flex items-center space-x-2 text-emerald-400">
+                <span className="flex items-center justify-center space-x-2 text-emerald-400">
                   <CheckCircle2 className="h-4 w-4" />
-                  <span>Activity Recorded to Instructor Analytics!</span>
+                  <span>Activity Recorded</span>
                 </span>
               ) : (
-                <span className="flex items-center space-x-2">
-                  <Sparkles className="h-4 w-4" />
-                  <span>Record Analysis to Session Telemetry</span>
-                  <ArrowRight className="h-4 w-4" />
+                <span className="flex items-center justify-center space-x-2">
+                  <CheckCircle2 className="h-4 w-4" />
+                  <span>Record Telemetry</span>
                 </span>
               )}
             </Button>

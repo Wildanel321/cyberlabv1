@@ -50,3 +50,4 @@ Open your browser at `http://localhost:5173`.
 
 ## License
 MIT License. Built for educational and defensive cybersecurity training.
+

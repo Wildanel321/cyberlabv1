@@ -117,7 +117,7 @@ export function analyzePhishingUrl(rawUrl: string): PhishingAnalysisResult {
   }
 
   if (hasPunycode) {
-    riskScore += 40;
+    riskScore += 75;
     findings.push({
       title: 'Punycode / IDN Homograph Detected',
       description: `Hostname contains "xn--" punycode prefix. Attackers exploit Cyrillic/Greek characters that look identical to Latin letters (e.g., Cyrillic "а" instead of Latin "a").`,

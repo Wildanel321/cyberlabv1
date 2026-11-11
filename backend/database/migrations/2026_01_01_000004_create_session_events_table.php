@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('session_events', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('session_id')->index();
-            $table->foreign('session_id')->references('id')->on('sessions')->onDelete('cascade');
+            $table->foreign('session_id')->references('id')->on('training_sessions')->onDelete('cascade');
             $table->string('event_type', 64)->index();
             $table->json('payload')->nullable();
             $table->timestamp('created_at')->useCurrent()->index();

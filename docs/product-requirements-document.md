@@ -42,3 +42,4 @@ CyberGuard Lab provides cybersecurity educators, trainers, and conference speake
    - Toggle bucket ACLs (Public Read, Public Write, Authenticated Users Only, Private).
    - Simulate unauthorized attacker probes: bucket enumeration, data leak, and ransomware overwrites.
    - Step-by-step AWS/Azure hardening guidance.
+

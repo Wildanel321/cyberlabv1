@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('activities', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('session_id')->index();
-            $table->foreign('session_id')->references('id')->on('sessions')->onDelete('cascade');
+            $table->foreign('session_id')->references('id')->on('training_sessions')->onDelete('cascade');
             $table->uuid('participant_id')->index();
             $table->foreign('participant_id')->references('id')->on('participants')->onDelete('cascade');
             $table->string('tool_name', 64)->index();

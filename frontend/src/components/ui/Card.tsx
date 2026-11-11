@@ -3,14 +3,14 @@ import React from 'react';
 interface CardProps {
   children: React.ReactNode;
   className?: string;
-  glow?: boolean;
+  bordered?: boolean;
 }
 
-export const Card: React.FC<CardProps> = ({ children, className = '', glow = false }) => {
+export const Card: React.FC<CardProps> = ({ children, className = '', bordered = true }) => {
   return (
     <div
-      className={`bg-slate-900/90 border border-slate-800 rounded-xl p-5 shadow-xl transition-all duration-200 backdrop-blur-sm ${
-        glow ? 'border-cyan-500/40 shadow-cyan-950/40 shadow-lg' : ''
+      className={`bg-slate-900 rounded-xl p-4 sm:p-5 transition-colors ${
+        bordered ? 'border border-slate-800' : ''
       } ${className}`}
     >
       {children}

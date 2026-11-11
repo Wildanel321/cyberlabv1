@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { QrCode, ArrowRight, ShieldCheck, AlertCircle } from 'lucide-react';
+import { QrCode, ShieldCheck, AlertCircle } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { api, ApiError } from '../services/api';
 
@@ -20,7 +20,6 @@ export const ParticipantJoin: React.FC<ParticipantJoinProps> = ({
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // If URL has ?session=XXXXXX, auto-populate code
     const params = new URLSearchParams(window.location.search);
     const codeParam = params.get('session');
     if (codeParam) {
@@ -48,7 +47,6 @@ export const ParticipantJoin: React.FC<ParticipantJoinProps> = ({
         nickname: nickname.trim(),
       });
 
-      // Save participant credentials locally for reconnects
       localStorage.setItem('participant_token', response.data.participant_token);
       localStorage.setItem('participant_id', response.data.participant_id);
       localStorage.setItem('participant_nickname', response.data.nickname);
@@ -68,10 +66,10 @@ export const ParticipantJoin: React.FC<ParticipantJoinProps> = ({
   };
 
   return (
-    <div className="max-w-md mx-auto px-4 py-12">
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl space-y-6">
+    <div className="max-w-md mx-auto px-4 py-8 sm:py-14">
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6">
         <div className="text-center space-y-2">
-          <div className="h-12 w-12 rounded-xl bg-cyan-950/80 border border-cyan-800 mx-auto flex items-center justify-center text-cyan-400">
+          <div className="h-12 w-12 rounded-xl bg-cyan-950 border border-cyan-800 mx-auto flex items-center justify-center text-cyan-400">
             <QrCode className="h-6 w-6" />
           </div>
           <h2 className="text-2xl font-bold text-white tracking-tight">Join Session</h2>
@@ -81,7 +79,7 @@ export const ParticipantJoin: React.FC<ParticipantJoinProps> = ({
         </div>
 
         {error && (
-          <div className="p-3.5 rounded-lg bg-rose-950/60 border border-rose-800 text-rose-300 text-xs flex items-start space-x-2">
+          <div className="p-3.5 rounded-lg bg-rose-950 border border-rose-800 text-rose-300 text-xs flex items-start space-x-2">
             <AlertCircle className="h-4 w-4 text-rose-400 shrink-0 mt-0.5" />
             <span>{error}</span>
           </div>
@@ -97,15 +95,15 @@ export const ParticipantJoin: React.FC<ParticipantJoinProps> = ({
               maxLength={6}
               value={code}
               onChange={(e) => setCode(e.target.value.toUpperCase())}
-              placeholder="e.g. CYB890"
-              className="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-3 text-center text-2xl font-mono font-bold tracking-widest text-cyan-400 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 placeholder-slate-700"
+              placeholder="e.g. CYB101"
+              className="w-full min-h-[48px] bg-slate-950 border border-slate-700 rounded-lg px-4 text-center text-2xl font-mono font-bold tracking-widest text-cyan-400 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 placeholder-slate-700"
               autoFocus
             />
           </div>
 
           <div>
             <label className="block text-xs uppercase font-mono font-semibold text-slate-300 mb-1.5">
-              Your Nickname / Call-Sign
+              Your Nickname
             </label>
             <input
               type="text"
@@ -113,7 +111,7 @@ export const ParticipantJoin: React.FC<ParticipantJoinProps> = ({
               value={nickname}
               onChange={(e) => setNickname(e.target.value)}
               placeholder="e.g. CyberNinja, Alex, Budi"
-              className="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2.5 text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 text-sm"
+              className="w-full min-h-[44px] bg-slate-950 border border-slate-700 rounded-lg px-4 text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 text-sm"
             />
           </div>
 
@@ -124,22 +122,21 @@ export const ParticipantJoin: React.FC<ParticipantJoinProps> = ({
             isLoading={loading}
             className="w-full mt-2"
           >
-            <span>Enter Training Room</span>
-            <ArrowRight className="h-4 w-4 ml-2" />
+            Enter Training Room
           </Button>
         </form>
 
-        <div className="pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+        <div className="pt-4 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
           <button
             type="button"
             onClick={onNavigateHome}
-            className="hover:text-white transition"
+            className="hover:text-white transition py-1"
           >
             &larr; Back to Home
           </button>
           <span className="flex items-center gap-1 text-[11px] text-emerald-400">
             <ShieldCheck className="h-3.5 w-3.5" />
-            Zero Registration
+            No Account Needed
           </span>
         </div>
       </div>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Cloud, ShieldAlert, CheckCircle2, AlertTriangle, Sparkles, ArrowRight, Server, Database, Key } from 'lucide-react';
+import { Cloud, ShieldAlert, CheckCircle2, AlertTriangle, Server, Database, Key } from 'lucide-react';
 import { probeCloudSecurity } from '../../utils/cloudSecuritySimulator';
 import { CloudBucketConfig, CloudProbeResult, RiskTier } from '../../types';
 import { Badge } from '../ui/Badge';
@@ -156,7 +156,7 @@ export const CloudSecuritySimulatorTool: React.FC<ToolProps> = ({ onComplete }) 
         {/* Quick config presets */}
         <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
           <div className="flex flex-wrap items-center gap-2 text-xs text-slate-400">
-            <span>Presets:</span>
+            <span className="text-slate-400">Presets:</span>
             <button
               type="button"
               onClick={() => {
@@ -171,7 +171,7 @@ export const CloudSecuritySimulatorTool: React.FC<ToolProps> = ({ onComplete }) 
                 setConfig(c);
                 setResult(probeCloudSecurity(c));
               }}
-              className="px-2 py-0.5 rounded bg-rose-950/60 border border-rose-800 text-rose-300 font-mono"
+              className="min-h-[44px] px-3 py-2 rounded-lg bg-rose-950/60 border border-rose-800 hover:bg-rose-900/60 active:scale-[0.98] text-rose-300 font-mono text-xs transition-colors"
             >
               Worst Case (Full Breach)
             </button>
@@ -189,13 +189,13 @@ export const CloudSecuritySimulatorTool: React.FC<ToolProps> = ({ onComplete }) 
                 setConfig(c);
                 setResult(probeCloudSecurity(c));
               }}
-              className="px-2 py-0.5 rounded bg-emerald-950/60 border border-emerald-800 text-emerald-300 font-mono"
+              className="min-h-[44px] px-3 py-2 rounded-lg bg-emerald-950/60 border border-emerald-800 hover:bg-emerald-900/60 active:scale-[0.98] text-emerald-300 font-mono text-xs transition-colors"
             >
               Hardened (Zero Trust)
             </button>
           </div>
 
-          <Button onClick={handleSimulateProbe} variant="primary">
+          <Button onClick={handleSimulateProbe} variant="primary" className="min-h-[44px] w-full sm:w-auto">
             Simulate Attacker Audit
           </Button>
         </div>
@@ -284,17 +284,17 @@ export const CloudSecuritySimulatorTool: React.FC<ToolProps> = ({ onComplete }) 
               disabled={hasSubmitted}
               variant="primary"
               size="lg"
+              className="w-full sm:w-auto min-h-[44px]"
             >
               {hasSubmitted ? (
-                <span className="flex items-center space-x-2 text-emerald-400">
+                <span className="flex items-center justify-center space-x-2 text-emerald-400">
                   <CheckCircle2 className="h-4 w-4" />
-                  <span>Activity Recorded to Instructor Analytics!</span>
+                  <span>Activity Recorded</span>
                 </span>
               ) : (
-                <span className="flex items-center space-x-2">
-                  <Sparkles className="h-4 w-4" />
-                  <span>Record Analysis to Session Telemetry</span>
-                  <ArrowRight className="h-4 w-4" />
+                <span className="flex items-center justify-center space-x-2">
+                  <CheckCircle2 className="h-4 w-4" />
+                  <span>Record Telemetry</span>
                 </span>
               )}
             </Button>

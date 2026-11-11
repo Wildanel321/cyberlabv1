@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Globe, ShieldAlert, AlertTriangle, CheckCircle2, ExternalLink, Sparkles, ArrowRight } from 'lucide-react';
+import { Globe, ShieldAlert, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { analyzePhishingUrl } from '../../utils/phishingAnalyzer';
 import { PhishingAnalysisResult, RiskTier } from '../../types';
 import { Badge } from '../ui/Badge';
@@ -84,14 +84,14 @@ export const PhishingAnalyzerTool: React.FC<ToolProps> = ({ onComplete }) => {
 
         {/* Preset attack samples */}
         <div className="flex flex-wrap items-center gap-2 text-xs text-slate-400 pt-1">
-          <span>Preset test cases:</span>
+          <span className="text-slate-400">Samples:</span>
           <button
             type="button"
             onClick={() => {
               setUrlInput('http://192.168.1.100/login/bca-klik');
               setResult(analyzePhishingUrl('http://192.168.1.100/login/bca-klik'));
             }}
-            className="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono"
+            className="min-h-[44px] px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-slate-200 font-mono text-xs transition-colors"
           >
             Direct IP Phish
           </button>
@@ -101,7 +101,7 @@ export const PhishingAnalyzerTool: React.FC<ToolProps> = ({ onComplete }) => {
               setUrlInput('https://xn--appl-43d.com/support');
               setResult(analyzePhishingUrl('https://xn--appl-43d.com/support'));
             }}
-            className="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono"
+            className="min-h-[44px] px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-slate-200 font-mono text-xs transition-colors"
           >
             Punycode Homograph
           </button>
@@ -111,7 +111,7 @@ export const PhishingAnalyzerTool: React.FC<ToolProps> = ({ onComplete }) => {
               setUrlInput('https://bca.klik.com-verification-account.xyz/update');
               setResult(analyzePhishingUrl('https://bca.klik.com-verification-account.xyz/update'));
             }}
-            className="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono"
+            className="min-h-[44px] px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-slate-200 font-mono text-xs transition-colors"
           >
             Subdomain Spoof
           </button>
@@ -206,17 +206,17 @@ export const PhishingAnalyzerTool: React.FC<ToolProps> = ({ onComplete }) => {
               disabled={hasSubmitted}
               variant="primary"
               size="lg"
+              className="w-full sm:w-auto min-h-[44px]"
             >
               {hasSubmitted ? (
-                <span className="flex items-center space-x-2 text-emerald-400">
+                <span className="flex items-center justify-center space-x-2 text-emerald-400">
                   <CheckCircle2 className="h-4 w-4" />
-                  <span>Activity Recorded to Instructor Analytics!</span>
+                  <span>Activity Recorded</span>
                 </span>
               ) : (
-                <span className="flex items-center space-x-2">
-                  <Sparkles className="h-4 w-4" />
-                  <span>Record Analysis to Session Telemetry</span>
-                  <ArrowRight className="h-4 w-4" />
+                <span className="flex items-center justify-center space-x-2">
+                  <CheckCircle2 className="h-4 w-4" />
+                  <span>Record Telemetry</span>
                 </span>
               )}
             </Button>

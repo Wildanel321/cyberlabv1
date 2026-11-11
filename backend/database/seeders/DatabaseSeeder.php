@@ -2,9 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Models\Session;
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,11 +15,25 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // 1. Instructor
+        $instructor = User::firstOrCreate(
+            ['email' => 'instructor@cyberlab.edu'],
+            [
+                'name' => 'Prof. Alex Vance',
+                'password' => Hash::make('CyberGuard2024!'),
+            ]
+        );
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        // 2. Active Demo Session
+        Session::firstOrCreate(
+            ['code' => 'CYB101'],
+            [
+                'user_id' => $instructor->id,
+                'title' => 'Interactive Cybersecurity & AI Privacy Lab',
+                'status' => 'active',
+                'max_participants' => 50,
+                'expires_at' => Carbon::now()->addHours(6),
+            ]
+        );
     }
 }

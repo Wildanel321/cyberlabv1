@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Users, Radio, QrCode, PowerOff, ShieldCheck, Activity,
-  BarChart3, PieChart, RefreshCw, AlertTriangle, CheckCircle2,
-  ExternalLink, Copy, Check
+  Users, QrCode, PowerOff, ShieldCheck, Activity,
+  BarChart3, PieChart, Copy, Check
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import {
@@ -34,24 +33,21 @@ export const InstructorDashboard: React.FC<InstructorDashboardProps> = ({
   const [copiedLink, setCopiedLink] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Fetch instructor's sessions list
   const loadSessions = async () => {
     try {
       const res = await api.getSessions();
       if (res?.data) {
         setSessions(res.data);
         if (!activeSession && res.data.length > 0) {
-          // Select most recent active or first session
           const active = res.data.find((s: Session) => s.status === 'active') || res.data[0];
           setActiveSession(active);
         }
       }
     } catch {
-      // Offline fallback mock session
       const fallbackSession: Session = {
         id: 'sess-local-1',
         user_id: instructorUser?.id || 'inst-1',
-        code: 'SEC101',
+        code: 'CYB101',
         title: 'Cybersecurity & AI Privacy Workshop',
         status: 'active',
         max_participants: 50,
@@ -65,7 +61,6 @@ export const InstructorDashboard: React.FC<InstructorDashboardProps> = ({
     }
   };
 
-  // Fetch telemetry analytics for active session
   const loadAnalytics = async (sessionId: string) => {
     try {
       const res = await api.getSessionAnalytics(sessionId);
@@ -73,10 +68,10 @@ export const InstructorDashboard: React.FC<InstructorDashboardProps> = ({
         setAnalytics(res.data);
       }
     } catch {
-      // Fallback telemetry calculation if server is starting
+      // Offline fallback
       setAnalytics({
         session_id: sessionId,
-        session_code: activeSession?.code || 'SEC101',
+        session_code: activeSession?.code || 'CYB101',
         session_title: activeSession?.title || 'Workshop',
         session_status: 'active',
         total_participants: 12,
@@ -100,14 +95,10 @@ export const InstructorDashboard: React.FC<InstructorDashboardProps> = ({
         recent_activities: [
           { id: '1', tool_name: 'Password Checker', nickname: 'Alex', risk_tier: 'LOW', score: 90, created_at: new Date().toISOString() },
           { id: '2', tool_name: 'Data Leak (PII)', nickname: 'Budi', risk_tier: 'CRITICAL', score: 35, created_at: new Date().toISOString() },
-          { id: '3', tool_name: 'Phishing Analyzer', nickname: 'CyberHero', risk_tier: 'HIGH', score: 55, created_at: new Date().toISOString() },
         ],
         activity_timeline: [
           { time: '10:00', count: 2 },
           { time: '10:05', count: 8 },
-          { time: '10:10', count: 15 },
-          { time: '10:15', count: 24 },
-          { time: '10:20', count: 38 },
         ]
       });
     }
@@ -117,7 +108,6 @@ export const InstructorDashboard: React.FC<InstructorDashboardProps> = ({
     loadSessions();
   }, []);
 
-  // Polling loop for active session telemetry (every 3 seconds)
   useEffect(() => {
     if (!activeSession) return;
     loadAnalytics(activeSession.id);
@@ -127,7 +117,6 @@ export const InstructorDashboard: React.FC<InstructorDashboardProps> = ({
     return () => clearInterval(interval);
   }, [activeSession?.id]);
 
-  // Create new session handler
   const handleCreateSession = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -143,13 +132,12 @@ export const InstructorDashboard: React.FC<InstructorDashboardProps> = ({
         setShowCreateModal(false);
       }
     } catch {
-      alert('Could not connect to backend server. Ensure backend is running.');
+      alert('Could not create session. Verify backend connectivity.');
     } finally {
       setLoading(false);
     }
   };
 
-  // End active session handler
   const handleEndSession = async () => {
     if (!activeSession) return;
     if (!confirm('Are you sure you want to end this live session? Participants will be notified.')) return;
@@ -163,7 +151,6 @@ export const InstructorDashboard: React.FC<InstructorDashboardProps> = ({
     }
   };
 
-  // Dynamic join URL for participants
   const joinUrl = typeof window !== 'undefined'
     ? `${window.location.origin}/?session=${activeSession?.code || ''}`
     : '';
@@ -182,148 +169,148 @@ export const InstructorDashboard: React.FC<InstructorDashboardProps> = ({
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-8 space-y-6 sm:space-y-8">
       {/* Top Bar */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800 pb-5">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
         <div>
-          <div className="flex items-center space-x-2">
-            <span className="text-xs uppercase font-mono text-cyan-400 font-bold bg-cyan-950/60 px-2 py-0.5 rounded border border-cyan-800">
-              Instructor Command Center
-            </span>
-            <span className="text-xs text-slate-500 font-mono">| {instructorUser?.email}</span>
+          <div className="flex items-center space-x-2 text-xs font-mono text-slate-400">
+            <span className="text-cyan-400 font-bold uppercase">Instructor Console</span>
+            <span>&bull;</span>
+            <span>{instructorUser?.email}</span>
           </div>
-          <h1 className="text-2xl font-black text-white mt-1">Live Workshop Analytics</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-white mt-1">Live Workshop Analytics</h1>
         </div>
 
-        <div className="flex items-center space-x-3">
-          <Button onClick={() => setShowCreateModal(true)} variant="primary" size="sm">
-            + New Training Session
+        <div className="flex items-center space-x-2 w-full sm:w-auto">
+          <Button onClick={() => setShowCreateModal(true)} variant="primary" size="sm" className="flex-1 sm:flex-initial">
+            + New Session
           </Button>
-          <Button onClick={onLogout} variant="ghost" size="sm">
+          <Button onClick={onLogout} variant="secondary" size="sm">
             Sign Out
           </Button>
         </div>
       </div>
 
-      {/* Active Session Highlight Banner & Projector QR Launcher */}
+      {/* Active Session Highlight Banner */}
       {activeSession && (
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-          <div className="space-y-2">
-            <div className="flex items-center space-x-2">
-              <Badge variant={activeSession.status === 'active' ? 'success' : 'default'}>
-                {activeSession.status.toUpperCase()}
-              </Badge>
-              <span className="text-xs font-mono text-slate-400">Created: {new Date(activeSession.created_at).toLocaleDateString()}</span>
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 space-y-4">
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <div className="flex items-center space-x-2">
+                <Badge variant={activeSession.status === 'active' ? 'success' : 'default'}>
+                  {activeSession.status.toUpperCase()}
+                </Badge>
+                <span className="text-xs font-mono text-slate-400">Created {new Date(activeSession.created_at).toLocaleDateString()}</span>
+              </div>
+              <h2 className="text-xl sm:text-2xl font-bold text-white">{activeSession.title}</h2>
+              <div className="flex flex-wrap items-center gap-3 pt-1 text-xs">
+                <span className="text-slate-400">
+                  Join Code:{' '}
+                  <strong className="text-cyan-400 font-mono text-base font-bold ml-1">
+                    {activeSession.code}
+                  </strong>
+                </span>
+                <span className="text-slate-700">|</span>
+                <span className="text-slate-400">
+                  Capacity: {activeSession.max_participants} max
+                </span>
+              </div>
             </div>
-            <h2 className="text-2xl font-bold text-white">{activeSession.title}</h2>
-            <div className="flex flex-wrap items-center gap-3 pt-1 text-xs">
-              <span className="text-slate-400">
-                Join Code:{' '}
-                <strong className="text-cyan-400 font-mono text-lg font-black tracking-wider ml-1">
-                  {activeSession.code}
-                </strong>
-              </span>
-              <span className="text-slate-600">|</span>
-              <span className="text-slate-400">
-                Capacity: <strong>{activeSession.max_participants} max</strong>
-              </span>
-            </div>
-          </div>
 
-          <div className="flex flex-wrap items-center gap-3">
-            <Button
-              onClick={() => setShowQrModal(true)}
-              variant="outline"
-              size="md"
-              className="bg-cyan-950/30 text-cyan-400 border-cyan-700"
-            >
-              <QrCode className="h-4 w-4 mr-2" />
-              <span>Projector QR Code</span>
-            </Button>
-
-            <Button
-              onClick={handleCopyLink}
-              variant="secondary"
-              size="md"
-            >
-              {copiedLink ? <Check className="h-4 w-4 mr-2 text-emerald-400" /> : <Copy className="h-4 w-4 mr-2" />}
-              <span>{copiedLink ? 'Link Copied!' : 'Copy Join Link'}</span>
-            </Button>
-
-            {activeSession.status === 'active' && (
+            <div className="flex flex-wrap items-center gap-2.5 w-full lg:w-auto">
               <Button
-                onClick={handleEndSession}
-                variant="danger"
+                onClick={() => setShowQrModal(true)}
+                variant="outline"
                 size="md"
+                className="flex-1 sm:flex-initial"
               >
-                <PowerOff className="h-4 w-4 mr-2" />
-                <span>End Session</span>
+                <QrCode className="h-4 w-4 mr-2" />
+                <span>Projector QR</span>
               </Button>
-            )}
+
+              <Button
+                onClick={handleCopyLink}
+                variant="secondary"
+                size="md"
+                className="flex-1 sm:flex-initial"
+              >
+                {copiedLink ? <Check className="h-4 w-4 mr-2 text-emerald-400" /> : <Copy className="h-4 w-4 mr-2" />}
+                <span>{copiedLink ? 'Copied' : 'Copy Link'}</span>
+              </Button>
+
+              {activeSession.status === 'active' && (
+                <Button
+                  onClick={handleEndSession}
+                  variant="danger"
+                  size="md"
+                  className="w-full sm:w-auto"
+                >
+                  <PowerOff className="h-4 w-4 mr-2" />
+                  <span>End Session</span>
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       )}
 
-      {/* Analytics KPI Counters */}
+      {/* Analytics KPI Counters: 2 col on phone, 4 col on desktop */}
       {analytics && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-5">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+          <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 sm:p-5">
             <div className="flex items-center justify-between text-slate-400 text-xs font-mono uppercase">
-              <span>Active Attendees</span>
+              <span>Attendees</span>
               <Users className="h-4 w-4 text-cyan-400" />
             </div>
-            <div className="text-3xl font-black text-white mt-2">
+            <div className="text-2xl sm:text-3xl font-bold text-white mt-1.5">
               {analytics.active_participants}
-              <span className="text-xs font-normal text-slate-500 ml-2">/ {analytics.total_participants} total</span>
+              <span className="text-xs font-normal text-slate-500 ml-1.5">/ {analytics.total_participants}</span>
             </div>
           </div>
 
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-5">
+          <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 sm:p-5">
             <div className="flex items-center justify-between text-slate-400 text-xs font-mono uppercase">
-              <span>Exercises Finished</span>
+              <span>Completed</span>
               <Activity className="h-4 w-4 text-emerald-400" />
             </div>
-            <div className="text-3xl font-black text-emerald-400 mt-2">
+            <div className="text-2xl sm:text-3xl font-bold text-emerald-400 mt-1.5">
               {analytics.total_activities_completed}
             </div>
           </div>
 
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-5">
+          <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 sm:p-5">
             <div className="flex items-center justify-between text-slate-400 text-xs font-mono uppercase">
-              <span>Class Security Score</span>
+              <span>Class Score</span>
               <ShieldCheck className="h-4 w-4 text-cyan-400" />
             </div>
-            <div className="text-3xl font-black text-cyan-400 mt-2">
+            <div className="text-2xl sm:text-3xl font-bold text-cyan-400 mt-1.5">
               {analytics.average_security_score}
               <span className="text-xs text-slate-500 font-normal"> / 100</span>
             </div>
           </div>
 
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-5">
-            <div className="flex items-center justify-between text-slate-400 text-xs font-mono uppercase">
-              <span>Live Telemetry</span>
-              <RefreshCw className="h-4 w-4 text-cyan-400 animate-spin" />
+          <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 sm:p-5">
+            <div className="text-slate-400 text-xs font-mono uppercase">
+              <span>Status</span>
             </div>
             <div className="text-xs text-emerald-400 font-semibold mt-3 flex items-center gap-1.5">
               <span className="h-2 w-2 rounded-full bg-emerald-500"></span>
-              Streaming every 3s
+              Live (3s interval)
             </div>
           </div>
         </div>
       )}
 
-      {/* Telemetry Charts Section */}
+      {/* Telemetry Charts: 1 col on mobile/tablet, 2 col on wide screen */}
       {analytics && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Tool Engagement Breakdown */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
-                <BarChart3 className="h-4 w-4 text-cyan-400" />
-                <span>Tool Usage Adoption (Completed Runs)</span>
-              </h3>
-            </div>
-            <div className="h-64 w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          {/* Tool Usage Adoption */}
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 space-y-3">
+            <h3 className="text-sm font-bold text-white flex items-center gap-2">
+              <BarChart3 className="h-4 w-4 text-cyan-400" />
+              <span>Tool Usage Breakdown</span>
+            </h3>
+            <div className="h-56 sm:h-64 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={analytics.tool_usage}>
                   <XAxis dataKey="display_name" stroke="#64748b" fontSize={10} tickLine={false} />
@@ -331,21 +318,19 @@ export const InstructorDashboard: React.FC<InstructorDashboardProps> = ({
                   <Tooltip
                     contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px', fontSize: '12px' }}
                   />
-                  <Bar dataKey="count" fill="#06b6d4" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="count" fill="#0891b2" radius={[3, 3, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
           </div>
 
-          {/* Risk Tier Exposure Distribution */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
-                <PieChart className="h-4 w-4 text-amber-400" />
-                <span>Risk Severity Distribution</span>
-              </h3>
-            </div>
-            <div className="h-64 w-full flex items-center justify-center">
+          {/* Risk Distribution */}
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 space-y-3">
+            <h3 className="text-sm font-bold text-white flex items-center gap-2">
+              <PieChart className="h-4 w-4 text-amber-400" />
+              <span>Risk Tier Distribution</span>
+            </h3>
+            <div className="h-56 sm:h-64 w-full flex items-center justify-center">
               <ResponsiveContainer width="100%" height="100%">
                 <RePieChart>
                   <Pie
@@ -354,9 +339,9 @@ export const InstructorDashboard: React.FC<InstructorDashboardProps> = ({
                     nameKey="tier"
                     cx="50%"
                     cy="50%"
-                    innerRadius={50}
-                    outerRadius={80}
-                    paddingAngle={4}
+                    innerRadius={45}
+                    outerRadius={75}
+                    paddingAngle={3}
                   >
                     {analytics.risk_distribution.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={RISK_COLORS[entry.tier]} />
@@ -365,7 +350,7 @@ export const InstructorDashboard: React.FC<InstructorDashboardProps> = ({
                   <Tooltip
                     contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px', fontSize: '12px' }}
                   />
-                  <Legend />
+                  <Legend wrapperStyle={{ fontSize: '12px' }} />
                 </RePieChart>
               </ResponsiveContainer>
             </div>
@@ -373,41 +358,41 @@ export const InstructorDashboard: React.FC<InstructorDashboardProps> = ({
         </div>
       )}
 
-      {/* Live Stream Feed & Zero-PII Notice */}
+      {/* Live Activity Stream */}
       {analytics && (
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 space-y-3">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1 border-b border-slate-800 pb-3">
             <div>
-              <h3 className="text-base font-bold text-white">Live Activity Stream</h3>
-              <p className="text-xs text-slate-400">Real-time incoming telemetry from student devices.</p>
+              <h3 className="text-sm font-bold text-white">Live Activity Feed</h3>
+              <p className="text-xs text-slate-400">Incoming telemetry from participant devices.</p>
             </div>
-            <span className="text-[11px] font-mono text-emerald-400 bg-emerald-950/60 px-2.5 py-1 rounded border border-emerald-800">
-              Zero PII: Inputs never logged
+            <span className="text-[10px] font-mono text-emerald-400 bg-emerald-950 px-2 py-0.5 rounded border border-emerald-800">
+              Zero PII Stored
             </span>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs font-mono">
-              <thead className="border-b border-slate-800 text-slate-500 uppercase text-[10px]">
+          <div className="overflow-x-auto -mx-5 px-5 sm:mx-0 sm:px-0">
+            <table className="w-full text-left text-xs font-mono min-w-[500px]">
+              <thead className="border-b border-slate-800 text-slate-400 uppercase text-[10px]">
                 <tr>
-                  <th className="py-2.5 px-3">Participant</th>
-                  <th className="py-2.5 px-3">Module</th>
-                  <th className="py-2.5 px-3">Risk Tier</th>
-                  <th className="py-2.5 px-3">Security Score</th>
-                  <th className="py-2.5 px-3">Timestamp</th>
+                  <th className="py-2 px-3">Participant</th>
+                  <th className="py-2 px-3">Module</th>
+                  <th className="py-2 px-3">Risk Tier</th>
+                  <th className="py-2 px-3">Score</th>
+                  <th className="py-2 px-3">Time</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800/60">
                 {analytics.recent_activities.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="py-4 text-center text-slate-500 font-sans">
-                      Waiting for students to complete their first security module...
+                    <td colSpan={5} className="py-6 text-center text-slate-500 font-sans">
+                      Waiting for student submissions. Once a participant finishes an exercise, telemetry will stream here in real time.
                     </td>
                   </tr>
                 ) : (
                   analytics.recent_activities.map((act) => (
-                    <tr key={act.id} className="hover:bg-slate-950/40">
-                      <td className="py-2.5 px-3 text-white font-sans font-semibold">
+                    <tr key={act.id}>
+                      <td className="py-2.5 px-3 text-white font-sans font-medium">
                         {act.nickname}
                       </td>
                       <td className="py-2.5 px-3 text-cyan-400">
@@ -416,7 +401,7 @@ export const InstructorDashboard: React.FC<InstructorDashboardProps> = ({
                       <td className="py-2.5 px-3">
                         <Badge tier={act.risk_tier}>{act.risk_tier}</Badge>
                       </td>
-                      <td className="py-2.5 px-3 font-bold text-slate-200">
+                      <td className="py-2.5 px-3 font-semibold text-slate-200">
                         {act.score}/100
                       </td>
                       <td className="py-2.5 px-3 text-slate-500 text-[11px]">
@@ -433,42 +418,40 @@ export const InstructorDashboard: React.FC<InstructorDashboardProps> = ({
 
       {/* Projector-Ready Big QR Code Modal */}
       {showQrModal && activeSession && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 max-w-lg w-full text-center space-y-6 shadow-2xl relative animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-4">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 max-w-lg w-full text-center space-y-5 relative">
             <button
               onClick={() => setShowQrModal(false)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-white p-2 text-lg font-bold"
+              className="absolute top-4 right-4 text-slate-400 hover:text-white p-2 text-xl font-bold"
             >
               &times;
             </button>
 
             <div className="space-y-1">
               <span className="text-xs uppercase font-mono tracking-widest text-cyan-400 font-bold">
-                Projector Join Display
+                Join Classroom Session
               </span>
-              <h2 className="text-2xl font-black text-white">{activeSession.title}</h2>
+              <h2 className="text-xl sm:text-2xl font-bold text-white">{activeSession.title}</h2>
               <p className="text-xs text-slate-400">
-                Scan with any smartphone camera or visit URL directly.
+                Scan with smartphone camera or enter room code on laptop.
               </p>
             </div>
 
-            {/* QR Code Container */}
-            <div className="bg-white p-6 rounded-2xl inline-block mx-auto shadow-2xl border-4 border-cyan-400">
+            <div className="bg-white p-4 sm:p-6 rounded-xl inline-block mx-auto border-2 border-cyan-400">
               <QRCodeSVG
                 value={joinUrl}
-                size={260}
+                size={220}
                 level="H"
                 includeMargin={false}
               />
             </div>
 
-            {/* Large Room Code Banner */}
-            <div className="bg-slate-950 border border-slate-800 rounded-xl p-4">
-              <span className="text-xs uppercase font-mono text-slate-400">Or enter room code at website:</span>
-              <div className="text-4xl font-black font-mono tracking-widest text-cyan-400 mt-1 select-all">
+            <div className="bg-slate-950 border border-slate-800 rounded-xl p-3.5 space-y-1">
+              <span className="text-xs uppercase font-mono text-slate-400">Room Code:</span>
+              <div className="text-3xl sm:text-4xl font-mono font-bold tracking-widest text-cyan-400 select-all">
                 {activeSession.code}
               </div>
-              <div className="text-xs text-slate-400 mt-2 font-mono break-all select-all">
+              <div className="text-xs text-slate-400 font-mono break-all select-all pt-1">
                 {joinUrl}
               </div>
             </div>
@@ -482,8 +465,8 @@ export const InstructorDashboard: React.FC<InstructorDashboardProps> = ({
 
       {/* Create Session Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 max-w-md w-full space-y-5 shadow-2xl relative">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-md w-full space-y-4 relative">
             <button
               onClick={() => setShowCreateModal(false)}
               className="absolute top-4 right-4 text-slate-400 hover:text-white p-2"
@@ -492,13 +475,13 @@ export const InstructorDashboard: React.FC<InstructorDashboardProps> = ({
             </button>
 
             <div>
-              <h2 className="text-xl font-bold text-white">Create New Session Room</h2>
+              <h2 className="text-lg font-bold text-white">Create New Session Room</h2>
               <p className="text-xs text-slate-400 mt-1">
-                Generates a unique 6-character code and instant QR code for your participants.
+                Generates a unique 6-character room code and dynamic QR code.
               </p>
             </div>
 
-            <form onSubmit={handleCreateSession} className="space-y-4">
+            <form onSubmit={handleCreateSession} className="space-y-3.5">
               <div>
                 <label className="block text-xs uppercase font-mono text-slate-300 mb-1">Session Title</label>
                 <input
@@ -506,35 +489,35 @@ export const InstructorDashboard: React.FC<InstructorDashboardProps> = ({
                   required
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-white text-sm"
+                  className="w-full min-h-[44px] bg-slate-950 border border-slate-700 rounded-lg px-3 text-white text-sm"
                 />
               </div>
 
               <div>
-                <label className="block text-xs uppercase font-mono text-slate-300 mb-1">Max Participant Capacity</label>
+                <label className="block text-xs uppercase font-mono text-slate-300 mb-1">Max Participant Limit</label>
                 <input
                   type="number"
                   min={5}
                   max={500}
                   value={newMaxParticipants}
                   onChange={(e) => setNewMaxParticipants(parseInt(e.target.value, 10))}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-white text-sm"
+                  className="w-full min-h-[44px] bg-slate-950 border border-slate-700 rounded-lg px-3 text-white text-sm"
                 />
               </div>
 
               <div>
-                <label className="block text-xs uppercase font-mono text-slate-300 mb-1">Duration Before Expiration (Minutes)</label>
+                <label className="block text-xs uppercase font-mono text-slate-300 mb-1">Duration (Minutes)</label>
                 <input
                   type="number"
                   min={15}
                   max={1440}
                   value={newExpiresMinutes}
                   onChange={(e) => setNewExpiresMinutes(parseInt(e.target.value, 10))}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-white text-sm"
+                  className="w-full min-h-[44px] bg-slate-950 border border-slate-700 rounded-lg px-3 text-white text-sm"
                 />
               </div>
 
-              <div className="flex justify-end gap-3 pt-3">
+              <div className="flex justify-end gap-2.5 pt-3">
                 <Button type="button" onClick={() => setShowCreateModal(false)} variant="secondary">
                   Cancel
                 </Button>

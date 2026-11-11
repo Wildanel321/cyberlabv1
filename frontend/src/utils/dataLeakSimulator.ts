@@ -49,13 +49,13 @@ export function analyzePersonalDataLeak(inputText: string): PiiAnalysisResult {
     });
   }
 
-  // 2. Credit Card Numbers (13-19 digits, possibly hyphenated or spaced)
-  const ccRegex = /\b(?:\d{4}[ -]?){3,4}\d{1,4}\b/g;
+  // 2. Credit Card Numbers (16 digits, with optional hyphen or space)
+  const ccRegex = /\b\d{4}[ -]?\d{4}[ -]?\d{4}[ -]?\d{4}\b/g;
   let ccMatch: RegExpExecArray | null;
   while ((ccMatch = ccRegex.exec(inputText)) !== null) {
     const raw = ccMatch[0];
     const stripped = raw.replace(/[- ]/g, '');
-    if (stripped.length >= 13 && stripped.length <= 19 && isValidLuhn(stripped)) {
+    if (stripped.length === 16 && isValidLuhn(stripped)) {
       const masked = stripped.slice(0, 4) + '-****-****-' + stripped.slice(-4);
       detections.push({
         type: 'CREDIT_CARD',

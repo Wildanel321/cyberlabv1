@@ -161,3 +161,4 @@ export function analyzePassword(password: string): PasswordAnalysisResult {
     recommendations
   };
 }
+

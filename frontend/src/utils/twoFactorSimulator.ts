@@ -72,3 +72,4 @@ export function runAttackerSimulation(enable2fa: boolean): {
     };
   }
 }
+

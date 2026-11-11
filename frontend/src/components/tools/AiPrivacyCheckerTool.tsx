@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Bot, ShieldAlert, AlertTriangle, CheckCircle2, Copy, Sparkles, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Bot, ShieldAlert, AlertTriangle, CheckCircle2, Copy, ShieldCheck } from 'lucide-react';
 import { analyzeAiPromptPrivacy } from '../../utils/aiPrivacyChecker';
 import { AiPrivacyAnalysisResult, RiskTier } from '../../types';
 import { Badge } from '../ui/Badge';
@@ -82,7 +82,7 @@ export const AiPrivacyCheckerTool: React.FC<ToolProps> = ({ onComplete }) => {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           {/* Preset buttons */}
           <div className="flex flex-wrap items-center gap-2 text-xs text-slate-400">
-            <span>Realistic prompt leaks:</span>
+            <span className="text-slate-400">Samples:</span>
             <button
               type="button"
               onClick={() => {
@@ -90,7 +90,7 @@ export const AiPrivacyCheckerTool: React.FC<ToolProps> = ({ onComplete }) => {
                 setPromptInput(sample);
                 setResult(analyzeAiPromptPrivacy(sample));
               }}
-              className="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono"
+              className="min-h-[44px] px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-slate-200 font-mono text-xs transition-colors"
             >
               Leaked OpenAI Key
             </button>
@@ -101,13 +101,13 @@ export const AiPrivacyCheckerTool: React.FC<ToolProps> = ({ onComplete }) => {
                 setPromptInput(sample);
                 setResult(analyzeAiPromptPrivacy(sample));
               }}
-              className="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono"
+              className="min-h-[44px] px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-slate-200 font-mono text-xs transition-colors"
             >
               AWS Key + DB Creds
             </button>
           </div>
 
-          <Button onClick={handleScan} disabled={!promptInput.trim()} variant="primary">
+          <Button onClick={handleScan} disabled={!promptInput.trim()} variant="primary" className="min-h-[44px] w-full sm:w-auto">
             Scan Prompt
           </Button>
         </div>
@@ -199,17 +199,17 @@ export const AiPrivacyCheckerTool: React.FC<ToolProps> = ({ onComplete }) => {
               disabled={hasSubmitted}
               variant="primary"
               size="lg"
+              className="w-full sm:w-auto min-h-[44px]"
             >
               {hasSubmitted ? (
-                <span className="flex items-center space-x-2 text-emerald-400">
+                <span className="flex items-center justify-center space-x-2 text-emerald-400">
                   <CheckCircle2 className="h-4 w-4" />
-                  <span>Activity Recorded to Instructor Analytics!</span>
+                  <span>Activity Recorded</span>
                 </span>
               ) : (
-                <span className="flex items-center space-x-2">
-                  <Sparkles className="h-4 w-4" />
-                  <span>Record Analysis to Session Telemetry</span>
-                  <ArrowRight className="h-4 w-4" />
+                <span className="flex items-center justify-center space-x-2">
+                  <CheckCircle2 className="h-4 w-4" />
+                  <span>Record Telemetry</span>
                 </span>
               )}
             </Button>

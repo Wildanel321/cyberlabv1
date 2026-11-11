@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('participants', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('session_id')->index();
-            $table->foreign('session_id')->references('id')->on('sessions')->onDelete('cascade');
+            $table->foreign('session_id')->references('id')->on('training_sessions')->onDelete('cascade');
             $table->string('nickname', 64);
             $table->char('token_hash', 64)->index();
             $table->enum('status', ['active', 'idle', 'disconnected'])->default('active')->index();

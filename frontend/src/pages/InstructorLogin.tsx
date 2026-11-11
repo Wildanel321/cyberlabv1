@@ -199,3 +199,4 @@ export const InstructorLogin: React.FC<InstructorLoginProps> = ({
     </div>
   );
 };
+

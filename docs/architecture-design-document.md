@@ -53,3 +53,4 @@
 - Primary: Laravel Reverb WebSockets broadcasting on private channel `private-session.{sessionId}`.
 - Authorization: HTTP POST `/broadcasting/auth` verifies instructor Sanctum bearer token or participant session token.
 - Secondary: Automatic HTTP polling fallback every 3 seconds if WebSocket connection encounters network partition or firewall blockage.
+

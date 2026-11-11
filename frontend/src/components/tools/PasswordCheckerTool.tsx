@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { KeyRound, ShieldAlert, CheckCircle2, AlertTriangle, ArrowRight, Sparkles, Eye, EyeOff } from 'lucide-react';
+import { KeyRound, ShieldAlert, CheckCircle2, AlertTriangle, Eye, EyeOff } from 'lucide-react';
 import { analyzePassword } from '../../utils/passwordChecker';
 import { PasswordAnalysisResult, RiskTier } from '../../types';
 import { Badge } from '../ui/Badge';
@@ -94,25 +94,25 @@ export const PasswordCheckerTool: React.FC<ToolProps> = ({ onComplete }) => {
 
         {/* Quick sample pills */}
         <div className="flex flex-wrap items-center gap-2 text-xs text-slate-400 pt-1">
-          <span>Try preset samples:</span>
+          <span className="text-slate-400">Samples:</span>
           <button
             type="button"
             onClick={() => setPassword('password123')}
-            className="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono"
+            className="min-h-[44px] px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-slate-200 font-mono text-xs transition-colors"
           >
             password123
           </button>
           <button
             type="button"
             onClick={() => setPassword('Admin!2024')}
-            className="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono"
+            className="min-h-[44px] px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-slate-200 font-mono text-xs transition-colors"
           >
             Admin!2024
           </button>
           <button
             type="button"
             onClick={() => setPassword('Correct-Horse-Battery-Staple-99!')}
-            className="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono"
+            className="min-h-[44px] px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-slate-200 font-mono text-xs transition-colors"
           >
             Correct-Horse-Battery-Staple-99!
           </button>
@@ -248,17 +248,17 @@ export const PasswordCheckerTool: React.FC<ToolProps> = ({ onComplete }) => {
           disabled={!password || hasSubmitted}
           variant="primary"
           size="lg"
+          className="w-full sm:w-auto min-h-[44px]"
         >
           {hasSubmitted ? (
-            <span className="flex items-center space-x-2 text-emerald-400">
+            <span className="flex items-center justify-center space-x-2 text-emerald-400">
               <CheckCircle2 className="h-4 w-4" />
-              <span>Activity Recorded to Instructor Analytics!</span>
+              <span>Activity Recorded</span>
             </span>
           ) : (
-            <span className="flex items-center space-x-2">
-              <Sparkles className="h-4 w-4" />
-              <span>Record Analysis to Session Telemetry</span>
-              <ArrowRight className="h-4 w-4" />
+            <span className="flex items-center justify-center space-x-2">
+              <CheckCircle2 className="h-4 w-4" />
+              <span>Record Telemetry</span>
             </span>
           )}
         </Button>

@@ -67,3 +67,4 @@
 - `POST /api/v1/participant/leave` - Graceful leave.
 - `POST /api/v1/participant/activities` - Submit completed tool activity telemetry (No raw secrets).
 - `GET  /api/v1/participant/history` - Get personal activity history for current session.
+

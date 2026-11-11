@@ -27,3 +27,4 @@ CyberGuard Lab is an interactive educational cybersecurity and AI privacy platfo
 - **NFR-Security**: OWASP Top 10 compliance, CSRF/XSS protection, CSP headers, rate-limiting on join and auth endpoints.
 - **NFR-Performance**: Sub-100ms API response latency, minimal client footprint, supporting 30+ concurrent participants seamlessly.
 - **NFR-Usability**: Responsive layout for mobile (participants) and desktop (instructors/projectors), accessible color contrast, dark cybersecurity theme.
+

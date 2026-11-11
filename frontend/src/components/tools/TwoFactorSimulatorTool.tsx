@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Smartphone, ShieldAlert, KeyRound, AlertTriangle, CheckCircle2, RefreshCw, Sparkles, ArrowRight, Lock, Unlock } from 'lucide-react';
+import { Smartphone, ShieldAlert, KeyRound, AlertTriangle, CheckCircle2, Lock, Unlock } from 'lucide-react';
 import { generateSimulatedTotp, runAttackerSimulation } from '../../utils/twoFactorSimulator';
 import { RiskTier } from '../../types';
 import { Badge } from '../ui/Badge';
@@ -86,7 +86,7 @@ export const TwoFactorSimulatorTool: React.FC<ToolProps> = ({ onComplete }) => {
           </div>
         </div>
         <div className="flex items-center space-x-2 text-xs bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-800 text-cyan-400">
-          <RefreshCw className="h-3.5 w-3.5 animate-spin" />
+          <KeyRound className="h-3.5 w-3.5" />
           <span>Interactive Attack Vector Simulator</span>
         </div>
       </div>
@@ -119,7 +119,7 @@ export const TwoFactorSimulatorTool: React.FC<ToolProps> = ({ onComplete }) => {
             }}
             variant="danger"
             size="sm"
-            className="mt-4 w-full"
+            className="mt-4 w-full min-h-[44px]"
           >
             Launch Attack (No 2FA)
           </Button>
@@ -151,7 +151,7 @@ export const TwoFactorSimulatorTool: React.FC<ToolProps> = ({ onComplete }) => {
             }}
             variant="primary"
             size="sm"
-            className="mt-4 w-full"
+            className="mt-4 w-full min-h-[44px]"
           >
             Launch Attack (With 2FA)
           </Button>
@@ -237,7 +237,7 @@ export const TwoFactorSimulatorTool: React.FC<ToolProps> = ({ onComplete }) => {
                 </div>
               )}
               {otpVerifyStatus === 'LOCKED' && (
-                <div className="p-3 rounded-lg bg-rose-950 border border-rose-700 text-rose-200 text-xs flex items-center space-x-2 animate-pulse">
+                <div className="p-3 rounded-lg bg-rose-950 border border-rose-700 text-rose-200 text-xs flex items-center space-x-2">
                   <ShieldAlert className="h-4 w-4 text-rose-400 shrink-0" />
                   <span>SECURITY LOCKOUT ACTIVATED: Too many failed attempts. Brute force defeated.</span>
                 </div>
@@ -289,17 +289,17 @@ export const TwoFactorSimulatorTool: React.FC<ToolProps> = ({ onComplete }) => {
           disabled={hasSubmitted}
           variant="primary"
           size="lg"
+          className="w-full sm:w-auto min-h-[44px]"
         >
           {hasSubmitted ? (
-            <span className="flex items-center space-x-2 text-emerald-400">
+            <span className="flex items-center justify-center space-x-2 text-emerald-400">
               <CheckCircle2 className="h-4 w-4" />
-              <span>Activity Recorded to Instructor Analytics!</span>
+              <span>Activity Recorded</span>
             </span>
           ) : (
-            <span className="flex items-center space-x-2">
-              <Sparkles className="h-4 w-4" />
-              <span>Record Analysis to Session Telemetry</span>
-              <ArrowRight className="h-4 w-4" />
+            <span className="flex items-center justify-center space-x-2">
+              <CheckCircle2 className="h-4 w-4" />
+              <span>Record Telemetry</span>
             </span>
           )}
         </Button>
