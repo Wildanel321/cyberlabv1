@@ -340,3 +340,4 @@ export const DreadSimulatorTool: React.FC<ToolProps> = ({ onComplete }) => {
     </div>
   );
 };
+

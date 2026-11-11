@@ -6,6 +6,7 @@ import { analyzeAiPromptPrivacy } from '../utils/aiPrivacyChecker';
 import { generateSimulatedTotp, runAttackerSimulation } from '../utils/twoFactorSimulator';
 import { probeCloudSecurity } from '../utils/cloudSecuritySimulator';
 import { calculateDreadRisk } from '../utils/dreadSimulator';
+import { evaluateAccountSecurity } from '../utils/accountSecurityEvaluator';
 
 describe('Tool 1: Password Security Checker', () => {
   it('flags common dictionary passwords with low score', () => {
@@ -178,5 +179,49 @@ describe('Tool 7: Metode Pemetaan Risiko DREAD', () => {
     expect(low.averageScore).toBe(1.2);
     expect(low.dreadCategory).toBe('RENDAH');
     expect(low.riskTier).toBe('LOW');
+  });
+});
+
+describe('Tool 8: Evaluasi Keamanan Akun', () => {
+  it('flags account without 2FA and password reuse as CRITICAL', () => {
+    const audit = evaluateAccountSecurity({
+      accountType: 'social_media',
+      passwordAgeDays: 730,
+      passwordReusedAcrossSites: true,
+      hasTwoFactorAuth: false,
+      mfaMethod: 'none',
+      hasRecoveryEmailOrPhone: false,
+      recoveryContactsUpToDate: false,
+      activeSessionCount: 8,
+      hasThirdPartyOAuthApps: true,
+      oauthAppsCount: 10,
+      loginNotificationsEnabled: false,
+    });
+
+    expect(audit.overallRiskTier).toBe('CRITICAL');
+    expect(audit.accountHealth).toBe('KRITIS');
+    expect(audit.criticalFindingsCount).toBeGreaterThan(0);
+    expect(audit.securityScore).toBeLessThan(50);
+  });
+
+  it('validates hardened account with FIDO/TOTP and fresh password as SANGAT AMAN', () => {
+    const audit = evaluateAccountSecurity({
+      accountType: 'banking',
+      passwordAgeDays: 30,
+      passwordReusedAcrossSites: false,
+      hasTwoFactorAuth: true,
+      mfaMethod: 'app_totp',
+      hasRecoveryEmailOrPhone: true,
+      recoveryContactsUpToDate: true,
+      activeSessionCount: 1,
+      hasThirdPartyOAuthApps: false,
+      oauthAppsCount: 0,
+      loginNotificationsEnabled: true,
+    });
+
+    expect(audit.overallRiskTier).toBe('LOW');
+    expect(audit.accountHealth).toBe('SANGAT AMAN');
+    expect(audit.criticalFindingsCount).toBe(0);
+    expect(audit.securityScore).toBeGreaterThanOrEqual(90);
   });
 });

@@ -65,6 +65,14 @@ export const Home: React.FC<HomeProps> = ({ onNavigate, onSelectSandboxTool }) =
       icon: Layers,
       color: 'text-cyan-400 bg-cyan-950/60 border-cyan-800',
     },
+    {
+      id: 'account',
+      name: 'Evaluasi Keamanan Akun',
+      category: 'Account Security',
+      desc: 'Audit postur kredensial, verifikasi dua langkah (2FA), sesi aktif perangkat, dan izin aplikasi.',
+      icon: UserCheck,
+      color: 'text-emerald-400 bg-emerald-950/60 border-emerald-800',
+    },
   ];
 
   return (
@@ -117,7 +125,7 @@ export const Home: React.FC<HomeProps> = ({ onNavigate, onSelectSandboxTool }) =
             </p>
           </div>
           <span className="text-xs font-mono text-emerald-400 bg-emerald-950 px-2.5 py-1 rounded border border-emerald-800">
-            7 / 7 Modules Active
+            8 / 8 Modules Active
           </span>
         </div>
 

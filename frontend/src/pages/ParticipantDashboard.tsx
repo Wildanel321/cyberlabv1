@@ -10,6 +10,7 @@ import { AiPrivacyCheckerTool } from '../components/tools/AiPrivacyCheckerTool';
 import { TwoFactorSimulatorTool } from '../components/tools/TwoFactorSimulatorTool';
 import { CloudSecuritySimulatorTool } from '../components/tools/CloudSecuritySimulatorTool';
 import { DreadSimulatorTool } from '../components/tools/DreadSimulatorTool';
+import { AccountSecurityEvaluatorTool } from '../components/tools/AccountSecurityEvaluatorTool';
 import { Badge } from '../components/ui/Badge';
 import { api } from '../services/api';
 import { Activity, RiskTier } from '../types';
@@ -88,6 +89,14 @@ export const ParticipantDashboard: React.FC<ParticipantDashboardProps> = ({
       desc: 'Penilaian 5 dimensi (Damage, Reproducibility, Exploitability, Affected Users, Discoverability).',
       icon: Layers,
       color: 'text-cyan-400 border-cyan-800 bg-cyan-950/60',
+    },
+    {
+      id: 'account_evaluator',
+      name: 'Evaluasi Keamanan Akun',
+      category: 'Account Security',
+      desc: 'Audit postur kredensial, 2FA/MFA, sesi aktif, dan hak akses OAuth pihak ketiga.',
+      icon: UserCheck,
+      color: 'text-emerald-400 border-emerald-800 bg-emerald-950/60',
     },
   ];
 
@@ -229,6 +238,9 @@ export const ParticipantDashboard: React.FC<ParticipantDashboardProps> = ({
           )}
           {activeTool === 'dread_simulator' && (
             <DreadSimulatorTool onComplete={handleToolComplete} />
+          )}
+          {activeTool === 'account_evaluator' && (
+            <AccountSecurityEvaluatorTool onComplete={handleToolComplete} />
           )}
         </div>
       ) : (

@@ -13,6 +13,7 @@ import { AiPrivacyCheckerTool } from './components/tools/AiPrivacyCheckerTool';
 import { TwoFactorSimulatorTool } from './components/tools/TwoFactorSimulatorTool';
 import { CloudSecuritySimulatorTool } from './components/tools/CloudSecuritySimulatorTool';
 import { DreadSimulatorTool } from './components/tools/DreadSimulatorTool';
+import { AccountSecurityEvaluatorTool } from './components/tools/AccountSecurityEvaluatorTool';
 import { ArrowLeft } from 'lucide-react';
 import { api } from './services/api';
 
@@ -204,6 +205,9 @@ export function App() {
             )}
             {sandboxTool === 'dread' && (
               <DreadSimulatorTool onComplete={() => alert('Sandbox check complete! (Join a live room to submit to instructor)')} />
+            )}
+            {sandboxTool === 'account' && (
+              <AccountSecurityEvaluatorTool onComplete={() => alert('Sandbox check complete! (Join a live room to submit to instructor)')} />
             )}
           </div>
         )}
