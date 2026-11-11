@@ -17,6 +17,7 @@ class ActivityService
         'ai_privacy',
         'two_factor',
         'cloud_security',
+        'dread_simulator',
     ];
 
     private const ALLOWED_RISK_TIERS = [

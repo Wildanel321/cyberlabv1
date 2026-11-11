@@ -5,6 +5,7 @@ import { analyzePersonalDataLeak } from '../utils/dataLeakSimulator';
 import { analyzeAiPromptPrivacy } from '../utils/aiPrivacyChecker';
 import { generateSimulatedTotp, runAttackerSimulation } from '../utils/twoFactorSimulator';
 import { probeCloudSecurity } from '../utils/cloudSecuritySimulator';
+import { calculateDreadRisk } from '../utils/dreadSimulator';
 
 describe('Tool 1: Password Security Checker', () => {
   it('flags common dictionary passwords with low score', () => {
@@ -131,5 +132,51 @@ describe('Tool 6: Cloud Security Simulator', () => {
     expect(probe.riskTier).toBe('LOW');
     expect(probe.dataExposed).toBe(false);
     expect(probe.findings.length).toBe(0);
+  });
+});
+
+describe('Tool 7: Metode Pemetaan Risiko DREAD', () => {
+  it('maps high threat score (>= 2.6) to TINGGI category and CRITICAL tier', () => {
+    // 3 + 3 + 3 + 3 + 3 = 15 / 5 = 3.0
+    const high = calculateDreadRisk({
+      damage: 3,
+      reproducibility: 3,
+      exploitability: 3,
+      affectedUsers: 3,
+      discoverability: 3,
+    });
+
+    expect(high.averageScore).toBe(3.0);
+    expect(high.dreadCategory).toBe('TINGGI');
+    expect(high.riskTier).toBe('CRITICAL');
+  });
+
+  it('maps medium threat score (2.0 - 2.5) to SEDANG category', () => {
+    // 2 + 2 + 3 + 2 + 2 = 11 / 5 = 2.2
+    const med = calculateDreadRisk({
+      damage: 2,
+      reproducibility: 2,
+      exploitability: 3,
+      affectedUsers: 2,
+      discoverability: 2,
+    });
+
+    expect(med.averageScore).toBe(2.2);
+    expect(med.dreadCategory).toBe('SEDANG');
+  });
+
+  it('maps low threat score (< 2.0) to RENDAH category and LOW tier', () => {
+    // 1 + 1 + 2 + 1 + 1 = 6 / 5 = 1.2
+    const low = calculateDreadRisk({
+      damage: 1,
+      reproducibility: 1,
+      exploitability: 2,
+      affectedUsers: 1,
+      discoverability: 1,
+    });
+
+    expect(low.averageScore).toBe(1.2);
+    expect(low.dreadCategory).toBe('RENDAH');
+    expect(low.riskTier).toBe('LOW');
   });
 });

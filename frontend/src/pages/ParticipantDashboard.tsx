@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-  KeyRound, Globe, UserCheck, Bot, Smartphone, Cloud,
+  KeyRound, Globe, UserCheck, Bot, Smartphone, Cloud, Layers,
   CheckCircle2, ArrowLeft, Trophy, Activity as ActivityIcon
 } from 'lucide-react';
 import { PasswordCheckerTool } from '../components/tools/PasswordCheckerTool';
@@ -9,6 +9,7 @@ import { DataLeakSimulatorTool } from '../components/tools/DataLeakSimulatorTool
 import { AiPrivacyCheckerTool } from '../components/tools/AiPrivacyCheckerTool';
 import { TwoFactorSimulatorTool } from '../components/tools/TwoFactorSimulatorTool';
 import { CloudSecuritySimulatorTool } from '../components/tools/CloudSecuritySimulatorTool';
+import { DreadSimulatorTool } from '../components/tools/DreadSimulatorTool';
 import { Badge } from '../components/ui/Badge';
 import { api } from '../services/api';
 import { Activity, RiskTier } from '../types';
@@ -79,6 +80,14 @@ export const ParticipantDashboard: React.FC<ParticipantDashboardProps> = ({
       desc: 'AWS S3 public ACLs, unencrypted data, and wildcard IAM policies.',
       icon: Cloud,
       color: 'text-rose-400 border-rose-800 bg-rose-950/60',
+    },
+    {
+      id: 'dread_simulator',
+      name: 'Metode Pemetaan Risiko DREAD',
+      category: 'Threat Modeling',
+      desc: 'Penilaian 5 dimensi (Damage, Reproducibility, Exploitability, Affected Users, Discoverability).',
+      icon: Layers,
+      color: 'text-cyan-400 border-cyan-800 bg-cyan-950/60',
     },
   ];
 
@@ -217,6 +226,9 @@ export const ParticipantDashboard: React.FC<ParticipantDashboardProps> = ({
           )}
           {activeTool === 'cloud_security' && (
             <CloudSecuritySimulatorTool onComplete={handleToolComplete} />
+          )}
+          {activeTool === 'dread_simulator' && (
+            <DreadSimulatorTool onComplete={handleToolComplete} />
           )}
         </div>
       ) : (

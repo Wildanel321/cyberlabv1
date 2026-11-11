@@ -12,6 +12,7 @@ import { DataLeakSimulatorTool } from './components/tools/DataLeakSimulatorTool'
 import { AiPrivacyCheckerTool } from './components/tools/AiPrivacyCheckerTool';
 import { TwoFactorSimulatorTool } from './components/tools/TwoFactorSimulatorTool';
 import { CloudSecuritySimulatorTool } from './components/tools/CloudSecuritySimulatorTool';
+import { DreadSimulatorTool } from './components/tools/DreadSimulatorTool';
 import { ArrowLeft } from 'lucide-react';
 import { api } from './services/api';
 
@@ -180,7 +181,7 @@ export function App() {
               className="inline-flex items-center space-x-2 text-xs font-medium text-cyan-400 hover:text-cyan-300 transition"
             >
               <ArrowLeft className="h-4 w-4" />
-              <span>&larr; Back to Home</span>
+              <span>Back to Home</span>
             </button>
 
             {sandboxTool === 'password' && (
@@ -200,6 +201,9 @@ export function App() {
             )}
             {sandboxTool === 'cloud' && (
               <CloudSecuritySimulatorTool onComplete={() => alert('Sandbox check complete! (Join a live room to submit to instructor)')} />
+            )}
+            {sandboxTool === 'dread' && (
+              <DreadSimulatorTool onComplete={() => alert('Sandbox check complete! (Join a live room to submit to instructor)')} />
             )}
           </div>
         )}

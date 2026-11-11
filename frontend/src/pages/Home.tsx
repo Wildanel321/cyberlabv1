@@ -1,5 +1,5 @@
 import React from 'react';
-import { Users, Radio, KeyRound, Globe, UserCheck, Bot, Smartphone, Cloud, Lock } from 'lucide-react';
+import { Users, Radio, KeyRound, Globe, UserCheck, Bot, Smartphone, Cloud, Layers, Lock } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 
 interface HomeProps {
@@ -57,6 +57,14 @@ export const Home: React.FC<HomeProps> = ({ onNavigate, onSelectSandboxTool }) =
       icon: Cloud,
       color: 'text-rose-400 bg-rose-950/60 border-rose-800',
     },
+    {
+      id: 'dread',
+      name: 'Metode Pemetaan Risiko DREAD',
+      category: 'Threat Modeling',
+      desc: 'Penilaian 5 dimensi (Damage, Reproducibility, Exploitability, Affected Users, Discoverability) skala 1-3.',
+      icon: Layers,
+      color: 'text-cyan-400 bg-cyan-950/60 border-cyan-800',
+    },
   ];
 
   return (
@@ -109,7 +117,7 @@ export const Home: React.FC<HomeProps> = ({ onNavigate, onSelectSandboxTool }) =
             </p>
           </div>
           <span className="text-xs font-mono text-emerald-400 bg-emerald-950 px-2.5 py-1 rounded border border-emerald-800">
-            6 / 6 Modules Active
+            7 / 7 Modules Active
           </span>
         </div>
 
