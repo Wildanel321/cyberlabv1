@@ -1,8 +1,9 @@
-# CyberGuard Lab - Deployment Guide (VPS & Local Network)
+# CyberGuard Lab - Deployment Guide (Cloudflare Zero Trust, VPS & Local Network)
 
-This guide documents the complete deployment architecture for **CyberGuard Lab** in two production environments:
+This guide documents the complete deployment architecture for **CyberGuard Lab** across three environments:
 1. **Local Network Mode (Workshop/Classroom LAN using Host IP)**
-2. **VPS Internet Production Mode (Domain with HTTPS & WSS WebSockets via Nginx Reverse Proxy)**
+2. **Cloudflare Zero Trust Tunnel Production Mode (High Security / Recommended)**
+3. **VPS Direct Production Mode (Domain with HTTPS & WSS via Nginx + Certbot)**
 
 ---
 
@@ -76,7 +77,135 @@ Allow inbound traffic on ports `5173`, `8000`, and `8080`:
 
 ---
 
-## Mode 2: VPS Production Mode (Domain with HTTPS & WSS)
+## Mode 2: Cloudflare Zero Trust Tunnel Production Mode (High Security - Recommended)
+
+Mengapa Cloudflare Zero Trust Tunnel adalah pilihan utama untuk platform edukasi keamanan siber:
+- **Zero Exposed Inbound Ports**: Seluruh port masuk pada server ditutup (`ufw default deny incoming`). Tidak ada port 80, 443, atau 22 yang terbuka ke internet umum.
+- **DDoS & Layer 7 Protection**: Semua request disaring terlebih dahulu oleh Jaringan Anycast Global dan WAF Cloudflare sebelum mencapai server Anda.
+- **Origin IP Cloaking**: IP publik VPS Anda 100% tersembunyi dari publik, mencegah serangan port-scanning atau targeted IP brute-force.
+- **Zero-Touch SSL**: Cloudflare mengelola sertifikat TLS/SSL secara otomatis di edge network tanpa perlu Certbot atau renewal manual.
+- **Native WebSocket (WSS) Support**: Lalu lintas Laravel Reverb disalurkan dengan aman melalui tunnel terenkripsi HTTP/2 dan QUIC.
+
+### 1. Pasang Cloudflare Tunnel Agent (`cloudflared`)
+Di server Ubuntu/Debian Anda:
+```bash
+curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg | sudo tee /etc/apt/trusted.gpg.d/cloudflare.gpg >/dev/null
+echo "deb https://pkg.cloudflare.com/cloudflared $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/cloudflared.list
+sudo apt update && sudo apt install -y cloudflared
+```
+
+### 2. Autentikasi dan Buat Tunnel
+```bash
+# Login ke akun Cloudflare
+cloudflared tunnel login
+
+# Buat tunnel baru khusus CyberGuard Lab
+cloudflared tunnel create cyberlab-tunnel
+```
+Catat **Tunnel ID** dan path file JSON kredensial yang dihasilkan (misal: `/root/.cloudflared/<TUNNEL_ID>.json`).
+
+### 3. Buat File Konfigurasi Tunnel
+Buat file `~/.cloudflared/config.yml`:
+```yaml
+tunnel: <TUNNEL_ID>
+credentials-file: /root/.cloudflared/<TUNNEL_ID>.json
+
+ingress:
+  # Rute seluruh traffic domain ke Nginx lokal di port 80
+  - hostname: cyberlab.domainanda.com
+    service: http://127.0.0.1:80
+    originRequest:
+      connectTimeout: 30s
+      noTLSVerify: true
+  - service: http_status:404
+```
+
+### 4. Hubungkan DNS Domain ke Tunnel
+```bash
+cloudflared tunnel route dns cyberlab-tunnel cyberlab.domainanda.com
+```
+
+### 5. Pasang dan Jalankan Daemon Systemd
+```bash
+sudo cloudflared service install
+sudo systemctl start cloudflared
+sudo systemctl enable cloudflared
+```
+
+### 6. Konfigurasi Nginx Lokal (Hanya Listen di Localhost)
+Nginx hanya perlu mendengarkan request di `127.0.0.1:80` dari `cloudflared`:
+```nginx
+server {
+    listen 127.0.0.1:80;
+    server_name cyberlab.domainanda.com;
+
+    root /var/www/cyberlab/frontend/dist;
+    index index.html;
+
+    real_ip_header CF-Connecting-IP;
+
+    # Security Headers
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+
+    # Frontend React SPA Routing
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # Backend API Routing (PHP-FPM)
+    location /api {
+        alias /var/www/cyberlab/backend/public;
+        try_files $uri $uri/ @backend;
+
+        location ~ \.php$ {
+            include fastcgi_params;
+            fastcgi_param SCRIPT_FILENAME /var/www/cyberlab/backend/public/index.php;
+            fastcgi_param SCRIPT_NAME /index.php;
+            fastcgi_param HTTPS on;
+            fastcgi_pass unix:/var/run/php/php8.3-fpm.sock;
+            fastcgi_index index.php;
+        }
+    }
+
+    location @backend {
+        rewrite /api/(.*)$ /api/index.php?/$1 last;
+    }
+
+    # Laravel Reverb WebSocket Proxy (WSS)
+    location /app {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $http_cf_connecting_ip;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_read_timeout 300s;
+        proxy_send_timeout 300s;
+    }
+
+    location ~ /\.(?!well-known).* {
+        deny all;
+    }
+}
+```
+
+### 7. Firewall Lockdown (Tutup Semua Port Publik!)
+Karena `cloudflared` membuat koneksi outbound terenkripsi ke edge Cloudflare, Anda dapat menutup **semua port publik inbound** di VPS:
+```bash
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+sudo ufw allow 22/tcp  # Khusus SSH remote
+sudo ufw enable
+```
+
+---
+
+## Mode 3: VPS Direct Production Mode (Domain with HTTPS & WSS via Nginx + Certbot)
 
 In this mode, CyberGuard Lab runs on an Ubuntu 22.04/24.04 VPS with a custom domain (e.g. `cyberguard.yourdomain.com`), secured by Let's Encrypt SSL certificates.
 
